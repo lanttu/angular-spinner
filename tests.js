@@ -4,6 +4,32 @@
 
 'use strict';
 
+describe('Service: usSpinner', function () {
+	var Spinner;
+
+	beforeEach(module(function($provide) {
+		Spinner = jasmine.createSpy('Spinner');
+		$provide.value('$window', {
+			Spinner: Spinner
+		});
+	}));
+	beforeEach(module('angularSpinner'));
+	beforeEach(module(function (usSpinnerProvider) {
+		usSpinnerProvider.setDefaults({
+			prop1: 'value1',
+			prop2: 'value2',
+		});
+	}));
+	it('should create spinner with defaults', inject(function (usSpinner) {
+		var spinner = usSpinner({ prop2: 'overwrite', prop3: 'value3' });
+		expect(Spinner).toHaveBeenCalledWith({
+			prop1: 'value1',
+			prop2: 'overwrite',
+			prop3: 'value3',
+		});
+	}));
+});
+
 describe('Directive: us-spinner', function () {
 	var Spinner;
 

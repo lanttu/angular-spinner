@@ -6,25 +6,40 @@
 'use strict';
 
 angular.module('angularSpinner', [])
-	.directive('usSpinner', ['$window', function ($window) {
+	.provider('usSpinner', [function () {
+		var defaults = {};
+		this.setDefaults = function (defs) {
+			defaults = defs;
+		};
+		this.$get = ['$window', function ($window) {
+			return function (opts) {
+				var spinner;
+				opts = angular.extend({}, defaults, opts);
+				spinner = new $window.Spinner(opts);
+				return spinner;
+			};
+		}];
+	}])
+
+	.directive('usSpinner', ['usSpinner', function (usSpinner) {
 		return {
 			scope: true,
 			link: function (scope, element, attr) {
 				scope.spinner = null;
-				
+
 				function stopSpinner() {
 					if (scope.spinner) {
 						scope.spinner.stop();
 						scope.spinner = null;
 					}
 				}
-				
+
 				scope.$watch(attr.usSpinner, function (options) {
 					stopSpinner();
-					scope.spinner = new $window.Spinner(options);
+					scope.spinner = usSpinner(options);
 					scope.spinner.spin(element[0]);
 				}, true);
-				
+
 				scope.$on('$destroy', function () {
 					stopSpinner();
 				});
