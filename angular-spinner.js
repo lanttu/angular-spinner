@@ -14,8 +14,9 @@ angular.module('angularSpinner', [])
 		this.$get = ['$window', function ($window) {
 			return function (opts) {
 				var spinner;
-				opts = angular.extend({}, defaults, opts);
-				spinner = new $window.Spinner(opts);
+				var config = angular.copy(defaults);
+				angular.extend(config, opts || {});
+				spinner = new $window.Spinner(config);
 				return spinner;
 			};
 		}];
